@@ -66,4 +66,5 @@ def format_branch(selected_task: str, prefix: Optional[str]):
     return formatted_branch
 
 
-typer.run(main)
+if __name__ == "__main__":
+    typer.run(main)
