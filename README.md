@@ -8,12 +8,14 @@ brew tap free-now/cli "git@gitlab.free-now.com:free-now/android/supply/core/home
 brew install free-now/cli/git-jira
 ```
 
+
 Create a Personal Access Token (PAT) in **JIRA** (not Confluence ⚠️) as per [instruction](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html#UsingPersonalAccessTokens-CreatingPATsintheapplication).
 
-Add `$JIRA_PAT` to your favorite shell:
+Add `$JIRA_PAT` and `$JIRA_INSTANCE` to your favorite shell:
 
 ```
 echo -n 'export JIRA_PAT=YOUR_PAT' >> ~/.zshrc
+echo -n 'export JIRA_INSTANCE=YOUR_JIRA_INSTANCE' >> ~/.zshrc
 source ~/.zshrc
 ```
 
