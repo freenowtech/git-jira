@@ -24,6 +24,8 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install the plugin for dynamic versioning
         run: poetry self add "poetry-dynamic-versioning[plugin]"
+      - name: Install dependencies
+        run: poetry install
       - name: Build project
         run: poetry build
       - name: Tests
