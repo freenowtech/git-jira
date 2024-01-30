@@ -4,10 +4,9 @@
 ## Installation
 
 ```bash
-brew tap free-now/cli "https://github.com/freenowtech/git-jira.git"
-brew install free-now/cli/git-jira
+brew tap freenowtech/cli
+brew install freenowtech/cli/git-jira
 ```
-
 
 Create a Personal Access Token (PAT) in **JIRA** (not Confluence ⚠️) as per [instruction](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html#UsingPersonalAccessTokens-CreatingPATsintheapplication).
 
