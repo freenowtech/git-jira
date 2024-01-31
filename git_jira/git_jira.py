@@ -12,6 +12,13 @@ from typing import Optional
 
 MAX_RESULT = 5
 
+# Mapping of ticket types to branch prefixes
+TICKET_TYPE_TO_PREFIX = {
+    "Story": "feature",
+    "Task": "feature",
+    "Bug": "bugfix",
+    "Refactoring": "refactor"
+}
 
 def load_branches():
     instance = os.environ.get("JIRA_INSTANCE")
@@ -32,28 +39,42 @@ def load_branches():
 
     for issue in response['issues']:
         formatted = issue['key'] + " " + issue['fields']['summary']
-        formatted_branches.append(re.sub(r"[^a-zA-Z0-9]+", ' ', formatted))
+        formatted_summary = re.sub(r"[^a-zA-Z0-9]+", ' ', formatted)
+        formatted_branches.append({
+            'summary': formatted_summary,
+            'issuetype': issue['fields']['issuetype']
+        })
     return formatted_branches[:MAX_RESULT]
 
-
 def main(prefix: Annotated[str, typer.Option(help="Prefix that is being used for the new branch.")] = "feature",
-         no_prefix: Annotated[bool, typer.Option("--no-prefix", help="Will not use a prefix")] = False):
+         no_prefix: Annotated[bool, typer.Option("--no-prefix", help="Will not use a prefix")] = False,
+         auto_branch_prefix: Annotated[bool, typer.Option("--auto-branch-prefix", help="Automatically determine branch prefix based on ticket type")] = False):
     """
-   CLI to switch to git branches based on one's JIRA tickets.
+    CLI to switch to git branches based on one's JIRA tickets.
 
-   If --prefix is used, it will add a specific prefix to the branch (e.g. feature -> "feature/")
-   --no-prefix will omit the default "feature/" prefix.
-   """
+    If --prefix is used, it will add a specific prefix to the branch (e.g. feature -> "feature/")
+    --no-prefix will omit the default "feature/" prefix.
+    --auto_branch_prefix will enable the ticket type to set the prefix: feature, bugfix, or refactor
+    """
     tasks = load_branches()
-    terminal_menu = TerminalMenu(tasks)
+    formatted_tasks = [f"{task['summary']}" for task in tasks]
+    terminal_menu = TerminalMenu(formatted_tasks)
     menu_entry_index = terminal_menu.show()
-    selected_task = tasks[menu_entry_index]
-    prefix = None if no_prefix else prefix
-    formatted_branch = format_branch(selected_task, prefix)
-    print(f"Switching to branch: {formatted_branch}")
-    process = subprocess.Popen(['git', 'switch', '-c', formatted_branch],
-                               stdout=subprocess.PIPE)
-    process.communicate()
+    if menu_entry_index is not None:
+        selected_task = tasks[menu_entry_index]
+        prefix = None if no_prefix else prefix
+        if auto_branch_prefix:
+            auto_prefix = TICKET_TYPE_TO_PREFIX.get(selected_task['issuetype']['name'], None)
+            print(f"Ticket Type: {selected_task['issuetype']}")
+            formatted_branch = format_branch(selected_task['summary'], auto_prefix)
+        else:
+            formatted_branch = format_branch(selected_task['summary'], prefix)
+        print(f"Switching to branch: {formatted_branch}")
+        process = subprocess.Popen(['git', 'switch', '-c', formatted_branch],
+                                   stdout=subprocess.PIPE)
+        process.communicate()
+    else:
+        print("No menu entry selected. Exiting.")
 
 
 def format_branch(selected_task: str, prefix: Optional[str]):
