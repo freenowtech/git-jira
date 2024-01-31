@@ -28,7 +28,7 @@ def load_branches():
         raise Exception("Please disclose your jira token as $JIRA_PAT")
     req = request.Request(
         instance + '/rest/api/2/search?'
-                   'jql=assignee=currentUser()+order+by+updated&fields=id,key,summary,issuetype,assignee',
+        'jql=assignee=currentUser()+order+by+updated&fields=id,key,summary,issuetype,assignee',
         method="GET")
     req.add_header('Authorization', f'Bearer {token}')
     response = request.urlopen(req).read().decode('utf-8')
@@ -41,7 +41,7 @@ def load_branches():
         formatted_summary = re.sub(r"[^a-zA-Z0-9]+", ' ', formatted)
         formatted_branches.append({
             'summary': formatted_summary,
-            'issuetype': issue['fields']['issuetype']  # Added to retrieve the ticket type
+            'issuetype': issue['fields']['issuetype']
         })
     return formatted_branches[:MAX_RESULT]
 
@@ -56,7 +56,7 @@ def main(prefix: Annotated[str, typer.Option(help="Prefix that is being used for
     --auto_branch_prefix will enable the ticket type to set the prefix: feature, bugfix, or refactor
     """
     tasks = load_branches()
-    formatted_tasks = [f"{task['summary']}" for task in tasks]  # Display only the summary
+    formatted_tasks = [f"{task['summary']}" for task in tasks]
     terminal_menu = TerminalMenu(formatted_tasks)
     menu_entry_index = terminal_menu.show()
     if menu_entry_index is not None:
