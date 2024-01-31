@@ -15,6 +15,7 @@ MAX_RESULT = 5
 # Mapping of ticket types to branch prefixes
 TICKET_TYPE_TO_PREFIX = {
     "Story": "feature",
+    "Task": "feature",
     "Bug": "bugfix",
     "Refactoring": "refactor"
 }
