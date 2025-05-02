@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import json
-import os
+from os import environ
 import re
 import subprocess
 from urllib import request
@@ -14,17 +14,29 @@ MAX_RESULT = 5
 
 
 def load_branches():
-    instance = os.environ.get("JIRA_INSTANCE")
-    token = os.environ.get("JIRA_PAT")
+    instance = environ.get("JIRA_INSTANCE")
+    user = environ.get("JIRA_USER")
+    token = environ.get("JIRA_API_TOKEN")
     if not instance:
-        raise Exception("Please disclose your jira instance as $JIRA_INSTANCE")
+        raise ValueError("Please disclose your jira instance as $JIRA_INSTANCE")
+    if not user:
+        raise ValueError("Please disclose your jira token as $JIRA_USER")
     if not token:
-        raise Exception("Please disclose your jira token as $JIRA_PAT")
+        raise ValueError("Please disclose your jira token as $JIRA_API_TOKEN")
+
+    password_mgr = request.HTTPPasswordMgrWithPriorAuth()
+    password_mgr.add_password(None, instance, user, token, is_authenticated=True)
+
+    auth_handler = request.HTTPBasicAuthHandler(password_mgr)
+    opener = request.build_opener(auth_handler)
+
+    request.install_opener(opener)
+
     req = request.Request(
-        instance + '/rest/api/2/search?'
+        instance + '/rest/api/3/search?'
         'jql=assignee=currentUser()+order+by+updated&fields=id,key,summary,issuetype,assignee',
         method="GET")
-    req.add_header('Authorization', f'Bearer {token}')
+    req.add_header('Accept', 'application/json')
     response = request.urlopen(req).read().decode('utf-8')
     response = json.loads(response)
 
@@ -41,7 +53,7 @@ def main(prefix: Annotated[str, typer.Option(help="Prefix that is being used for
     """
    CLI to switch to git branches based on one's JIRA tickets.
 
-   If --prefix is used, it will add a specific prefix to the branch (e.g. feature -> "feature/")
+   If --prefix is used, it adds a specific prefix to the branch (e.g. feature -> "feature/")
    --no-prefix will omit the default "feature/" prefix.
    """
     tasks = load_branches()

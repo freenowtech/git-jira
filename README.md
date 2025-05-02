@@ -1,6 +1,10 @@
 
 ![](out.gif)
 
+# git-jira
+
+A simple CLI to switch to git branches based on one's JIRA tickets, only supports Jira Cloud.
+
 ## Installation
 
 ```bash
@@ -8,13 +12,14 @@ brew tap freenowtech/cli
 brew install freenowtech/cli/git-jira
 ```
 
-Create a Personal Access Token (PAT) in **JIRA** (not Confluence ⚠️) as per [instruction](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html#UsingPersonalAccessTokens-CreatingPATsintheapplication).
+Create a Personal Access Token (PAT) in **JIRA** as per [instruction](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/).
 
-Add `$JIRA_PAT` and `$JIRA_INSTANCE` to your favorite shell:
+Add `$JIRA_USER`, `$JIRA_API_TOKEN` and `$JIRA_INSTANCE` to your favorite shell:
 
 ```
-echo -n 'export JIRA_PAT=YOUR_PAT' >> ~/.zshrc
-echo -n 'export JIRA_INSTANCE=YOUR_JIRA_INSTANCE' >> ~/.zshrc
+echo -n 'export JIRA_USER=YOUR_USER' >> ~/.zshrc
+echo -n 'export JIRA_API_TOKEN=YOUR_API_TOKEN' >> ~/.zshrc
+echo -n 'export JIRA_INSTANCE=YOUR_INSTANCE' >> ~/.zshrc
 source ~/.zshrc
 ```
 
