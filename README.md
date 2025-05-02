@@ -16,6 +16,8 @@ Create a Personal Access Token (PAT) in **JIRA** as per [instruction](https://su
 
 Add `$JIRA_USER`, `$JIRA_API_TOKEN` and `$JIRA_INSTANCE` to your favorite shell:
 
+**Important**: `$JIRA_INSTANCE` needs to be pointed at the `atlassian.net` domain, for example `htts://x.atlassian.net`. 
+
 ```
 echo -n 'export JIRA_USER=YOUR_USER' >> ~/.zshrc
 echo -n 'export JIRA_API_TOKEN=YOUR_API_TOKEN' >> ~/.zshrc
