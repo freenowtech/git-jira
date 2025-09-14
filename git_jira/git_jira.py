@@ -33,7 +33,7 @@ def load_branches():
     request.install_opener(opener)
 
     req = request.Request(
-        instance + '/rest/api/3/search?'
+        instance + '/rest/api/3/search/jql?'
         'jql=assignee=currentUser()+order+by+updated&fields=id,key,summary,issuetype,assignee',
         method="GET")
     req.add_header('Accept', 'application/json')
